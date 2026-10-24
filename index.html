@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="it" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Piano Alimentare - Olympia Marzano</title>
+    
+    <!-- PWA & iOS Safari Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Piano Olympia">
+    <meta name="theme-color" content="#FACC15">
+    <link rel="apple-touch-icon" href="https://placehold.co/180x180/FACC15/1E293B?text=OM">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        amber: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* iOS Safe Area Insets Support */
+        .pt-safe { padding-top: env(safe-area-inset-top, 1rem); }
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 4.5rem); }
+        .mb-safe { margin-bottom: env(safe-area-inset-bottom, 4rem); }
+        
+        /* Smooth Scrolling & Touch Behavior */
+        html, body {
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* Custom Scrollbar for desktop preview */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #fcd34d;
+            border-radius: 4px;
+        }
+        
+        /* Glassmorphism effects */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="h-full text-slate-800 antialiased selection:bg-amber-200 selection:text-amber-900 pb-safe">
+
+    <!-- TOP HEADER -->
+    <header class="sticky top-0 z-30 bg-amber-400 text-slate-900 shadow-md pt-safe">
+        <div class="px-4 py-3 flex items-center justify-between max-w-lg mx-auto">
+            <div>
+                <span class="text-xs font-semibold uppercase tracking-wider text-amber-900 opacity-80">Dott.ssa Alessia Paradiso</span>
+                <h1 class="text-xl font-bold tracking-tight text-slate-900 leading-none">Piano Olympia</h1>
+            </div>
+            <button onclick="resetAllData()" title="Ripristino totale" class="text-xs bg-amber-500/30 hover:bg-amber-500/50 text-amber-950 font-medium px-2.5 py-1.5 rounded-lg transition-colors flex items-center gap-1 border border-amber-600/20">
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reset
+            </button>
+        </div>
+
+        <!-- DAILY MOTIVATIONAL BANNER -->
+        <div class="bg-amber-500/30 border-t border-amber-500/30 px-4 py-2.5">
+            <div class="max-w-lg mx-auto flex items-start gap-2 text-xs font-medium text-amber-950">
+                <i data-lucide="sparkles" class="w-4 h-4 text-amber-800 shrink-0 mt-0.5"></i>
+                <p id="motivationalQuote" class="italic leading-snug">"Caricamento motivazione del giorno..."</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="max-w-lg mx-auto px-4 py-4 mb-16">
+
+        <!-- TAB 1: PIANO ALIMENTARE (WEEKLY MEALS) -->
+        <section id="tab-piano" class="space-y-4">
+            <!-- Day Selector Horizontal Scroll -->
+            <div class="flex space-x-2 overflow-x-auto pb-2 scrollbar-none -mx-4 px-4 sticky top-[88px] z-20 bg-slate-50/95 py-2 backdrop-blur-sm">
+                <button onclick="selectDay('Lunedì')" class="day-btn text-xs font-semibold px-4 py-2 rounded-xl transition-all shadow-sm border shrink-0 bg-amber-400 text-slate-900 border-amber-400" data-day="Lunedì">Lun</button>
+                <button onclick="selectDay('Martedì')" class="day-btn text-xs font-semibold px-4 py-2 rounded-xl transition-all shadow-sm border shrink-0 bg-white text-slate-600 border-slate-200" data-day="Martedì">Mar</button>
+                <button onclick="selectDay('Mercoledì')" class="day-btn text-xs font-semibold px-4 py-2 rounded-xl transition-all shadow-sm border shrink-0 bg-white text-slate-600 border-slate-200" data-day="Mercoledì">Mer</button>
+                <button onclick="selectDay('Giovedì')" class="day-btn text-xs font-semibold px-4 py-2 rounded-xl transition-all shadow-sm border shrink-0 bg-white text-slate-600 border-slate-200" data-day="Giovedì">Gio</button>
+                <button onclick="selectDay('Venerdì')" class="day-btn text-xs font-semibold px-4 py-2 rounded-xl transition-all shadow-sm border shrink-0 bg-white text-slate-600 border-slate-200" data-day="Venerdì">Ven</button>
+                <button onclick="selectDay('Sabato')" class="day-btn text-xs font-semibold px-4 py-2 rounded-xl transition-all shadow-sm border shrink-0 bg-white text-slate-600 border-slate-200" data-day="Sabato">Sab</button>
+                <button onclick="selectDay('Domenica')" class="day-btn text-xs font-semibold px-4 py-2 rounded-xl transition-all shadow-sm border shrink-0 bg-white text-slate-600 border-slate-200" data-day="Domenica">Dom</button>
+            </div>
+
+            <!-- Current Day Title & Action Bar -->
+            <div class="flex items-center justify-between pt-1">
+                <h2 id="currentDayTitle" class="text-xl font-extrabold text-slate-800 tracking-tight">Lunedì</h2>
+                <div class="flex gap-2">
+                    <button onclick="generateDailyGrocery()" class="text-xs bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+                        <i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-amber-600"></i> Spesa del giorno
+                    </button>
+                    <button onclick="resetCurrentDay()" class="text-xs bg-amber-100 hover:bg-amber-200 text-amber-800 font-medium px-2.5 py-1.5 rounded-lg transition flex items-center gap-1" title="Ripristina ricette originali di oggi">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Ripristina
+                    </button>
+                </div>
+            </div>
+
+            <!-- Meal Cards Container -->
+            <div id="mealsContainer" class="space-y-3">
+                <!-- Meal cards will be populated dynamically by JS -->
+            </div>
+        </section>
+
+        <!-- TAB 2: LISTA DELLA SPESA -->
+        <section id="tab-spesa" class="hidden space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-extrabold text-slate-800">Lista della Spesa</h2>
+                    <p class="text-xs text-slate-500">Calcolata dal menù e personalizzabile</p>
+                </div>
+                <button onclick="clearCheckedGrocery()" class="text-xs text-slate-500 hover:text-rose-600 bg-slate-100 px-2.5 py-1.5 rounded-lg border border-slate-200">
+                    Pulisci spuntati
+                </button>
+            </div>
+
+            <!-- Add Custom Grocery Item -->
+            <form onsubmit="addCustomGroceryItem(event)" class="flex gap-2">
+                <input type="text" id="customGroceryInput" placeholder="Aggiungi ingrediente o prodotto..." required class="flex-1 text-sm bg-white border border-slate-200 rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-400">
+                <button type="submit" class="bg-amber-400 hover:bg-amber-500 text-slate-900 font-semibold px-4 py-2.5 rounded-xl text-sm transition flex items-center justify-center">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                </button>
+            </form>
+
+            <!-- Mode Selector (Weekly vs Custom Daily) -->
+            <div class="flex rounded-xl bg-slate-200 p-1 text-xs font-semibold text-slate-600">
+                <button onclick="switchGroceryMode('weekly')" id="btn-groc-weekly" class="flex-1 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition">Settimanale</button>
+                <button onclick="switchGroceryMode('daily')" id="btn-groc-daily" class="flex-1 py-1.5 rounded-lg transition">Solo Oggi</button>
+            </div>
+
+            <!-- Grocery List Content -->
+            <div id="groceryListContainer" class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm space-y-2">
+                <!-- Grocery items rendered dynamically -->
+            </div>
+        </section>
+
+        <!-- TAB 3: PROGRESSI & PESO -->
+        <section id="tab-progressi" class="hidden space-y-4">
+            <div>
+                <h2 class="text-xl font-extrabold text-slate-800">Monitoraggio Peso</h2>
+                <p class="text-xs text-slate-500">Registra i tuoi progressi nel tempo</p>
+            </div>
+
+            <!-- New Log Form -->
+            <form onsubmit="saveWeightLog(event)" class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm space-y-3">
+                <h3 class="text-sm font-semibold text-slate-800">Nuova Misurazione</h3>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-[11px] font-medium text-slate-500 uppercase">Data</label>
+                        <input type="date" id="weightDate" required class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-amber-400 outline-none">
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-medium text-slate-500 uppercase">Peso (kg)</label>
+                        <input type="number" step="0.1" id="weightValue" placeholder="es. 62.5" required class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-amber-400 outline-none">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-[11px] font-medium text-slate-500 uppercase">Vita (cm - opz.)</label>
+                        <input type="number" step="0.5" id="waistValue" placeholder="es. 70" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-amber-400 outline-none">
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-medium text-slate-500 uppercase">Fianchi (cm - opz.)</label>
+                        <input type="number" step="0.5" id="hipsValue" placeholder="es. 95" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-amber-400 outline-none">
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold py-2.5 rounded-xl text-xs transition shadow-sm">
+                    Salva Misurazione
+                </button>
+            </form>
+
+            <!-- Chart Canvas -->
+            <div class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm">
+                <h3 class="text-sm font-semibold text-slate-800 mb-2 flex items-center justify-between">
+                    <span>Andamento Peso</span>
+                    <span id="weightStats" class="text-xs font-normal text-amber-700 font-mono"></span>
+                </h3>
+                <div class="relative w-full h-48">
+                    <canvas id="weightChart" class="w-full h-full"></canvas>
+                </div>
+            </div>
+
+            <!-- Weight History Table -->
+            <div class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm">
+                <h3 class="text-sm font-semibold text-slate-800 mb-2">Storico Registro</h3>
+                <div id="weightHistoryContainer" class="divide-y divide-slate-100 max-h-48 overflow-y-auto">
+                    <!-- History rows populated JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: NOTE -->
+        <section id="tab-note" class="hidden space-y-4">
+            <div>
+                <h2 class="text-xl font-extrabold text-slate-800">Note & Promemoria</h2>
+                <p class="text-xs text-slate-500">Annotazioni personali per la nutrizionista o per la giornata</p>
+            </div>
+
+            <div class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm space-y-2">
+                <label class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                    <i data-lucide="notebook" class="w-4 h-4 text-amber-500"></i> Note Generali
+                </label>
+                <textarea id="generalNotes" oninput="saveGeneralNotes()" rows="4" placeholder="Scrivi qui osservazioni, come ti senti, domande per la Dott.ssa Paradiso..." class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-amber-400 leading-relaxed"></textarea>
+                <span class="text-[10px] text-slate-400 block text-right">Salvataggio automatico</span>
+            </div>
+
+            <!-- Day specific notes -->
+            <div class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm space-y-2">
+                <label id="dayNoteLabel" class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                    <i data-lucide="calendar" class="w-4 h-4 text-amber-500"></i> Note per <span id="dayNoteName">Lunedì</span>
+                </label>
+                <textarea id="dayNotes" oninput="saveDayNotes()" rows="3" placeholder="Note specifiche relative al menù di oggi..." class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-amber-400 leading-relaxed"></textarea>
+            </div>
+        </section>
+
+        <!-- TAB 5: INFO & GUIDELINES -->
+        <section id="tab-info" class="hidden space-y-4">
+            <div>
+                <h2 class="text-xl font-extrabold text-slate-800">Linee Guida & Integratori</h2>
+                <p class="text-xs text-slate-500">Indicazioni ufficiali Dott.ssa Alessia Paradiso</p>
+            </div>
+
+            <!-- Integratori Card -->
+            <div class="bg-gradient-to-br from-amber-500 to-amber-600 text-white rounded-2xl p-4 shadow-md space-y-3">
+                <div class="flex items-center gap-2 border-b border-amber-400/50 pb-2">
+                    <i data-lucide="pill" class="w-5 h-5 text-amber-100"></i>
+                    <h3 class="font-bold text-sm tracking-wide">Integratori Giornalieri</h3>
+                </div>
+                <ul class="space-y-2 text-xs text-amber-50">
+                    <li class="flex items-start gap-2">
+                        <span class="bg-amber-400/40 text-white font-bold px-1.5 py-0.5 rounded text-[10px] mt-0.5">MATTINO</span>
+                        <span><strong>Drenvin:</strong> 1 misurino diluito in 1L di acqua da bere durante la mattinata.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="bg-amber-400/40 text-white font-bold px-1.5 py-0.5 rounded text-[10px] mt-0.5">COLATIONE</span>
+                        <span><strong>Dicoflor60:</strong> 1 bustina al mattino durante o subito dopo colazione.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Regole Generali Card -->
+            <div class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm space-y-3">
+                <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                    <i data-lucide="droplet" class="w-4 h-4 text-blue-500"></i> Idratazione & Condimenti
+                </h3>
+                <ul class="space-y-2 text-xs text-slate-600 list-disc list-inside leading-relaxed">
+                    <li><strong>Acqua:</strong> Bere almeno 2 litri di acqua naturale al giorno. Inizia sempre ogni pasto principale e colazione con 2 bicchieri d'acqua.</li>
+                    <li><strong>Olio EVO:</strong> 1 cucchiaio a pranzo + 1 cucchiaino a cena (a crudo salvo diverse indicazioni).</li>
+                    <li><strong>Caffè:</strong> Amaro o con dolcificante a zero calorie.</li>
+                    <li><strong>Cotture consigliate:</strong> Vapore, piastra, forno, cartoccio, friteuse ad aria senza aggiunta di grassi idrogenati.</li>
+                </ul>
+            </div>
+
+            <!-- Contatti / Credit -->
+            <div class="bg-slate-100 rounded-2xl p-4 text-center space-y-1">
+                <p class="text-xs font-bold text-slate-700">Paziente: Olympia Marzano</p>
+                <p class="text-[11px] text-slate-500">Nutrizionista: Dott.ssa Alessia Paradiso</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- BOTTOM NAVIGATION BAR FOR MOBILE / SAFARI -->
+    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 pb-safe">
+        <div class="max-w-lg mx-auto flex justify-around items-center h-14 px-2">
+            <button onclick="switchTab('piano')" id="nav-piano" class="nav-btn flex-1 flex flex-col items-center justify-center py-1 text-amber-600 font-bold">
+                <i data-lucide="utensils" class="w-5 h-5"></i>
+                <span class="text-[10px] mt-0.5">Menù</span>
+            </button>
+            <button onclick="switchTab('spesa')" id="nav-spesa" class="nav-btn flex-1 flex flex-col items-center justify-center py-1 text-slate-400 font-medium">
+                <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                <span class="text-[10px] mt-0.5">Spesa</span>
+            </button>
+            <button onclick="switchTab('progressi')" id="nav-progressi" class="nav-btn flex-1 flex flex-col items-center justify-center py-1 text-slate-400 font-medium">
+                <i data-lucide="trending-down" class="w-5 h-5"></i>
+                <span class="text-[10px] mt-0.5">Progressi</span>
+            </button>
+            <button onclick="switchTab('note')" id="nav-note" class="nav-btn flex-1 flex flex-col items-center justify-center py-1 text-slate-400 font-medium">
+                <i data-lucide="file-text" class="w-5 h-5"></i>
+                <span class="text-[10px] mt-0.5">Note</span>
+            </button>
+            <button onclick="switchTab('info')" id="nav-info" class="nav-btn flex-1 flex flex-col items-center justify-center py-1 text-slate-400 font-medium">
+                <i data-lucide="info" class="w-5 h-5"></i>
+                <span class="text-[10px] mt-0.5">Info</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- EDIT MEAL MODAL -->
+    <div id="editModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4 transition-opacity">
+        <div class="bg-white w-full max-w-lg rounded-t-3xl sm:rounded-2xl p-5 space-y-4 shadow-xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <div>
+                    <span id="modalMealCategory" class="text-[10px] font-bold text-amber-600 uppercase tracking-wide">COLAZIONE</span>
+                    <h3 id="modalMealTitle" class="text-base font-bold text-slate-800">Modifica Pasto</h3>
+                </div>
+                <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600 p-1">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div>
+                <label class="text-xs font-medium text-slate-500 mb-1 block">Contenuto del pasto / Ingredienti</label>
+                <textarea id="modalMealInput" rows="5" class="w-full text-xs border border-slate-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-amber-400 leading-relaxed"></textarea>
+            </div>
+
+            <div class="flex gap-2 pt-2">
+                <button onclick="resetMealToDefault()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 rounded-xl text-xs transition">
+                    Ripristina
+                </button>
+                <button onclick="saveMealEdit()" class="flex-1 bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold py-2.5 rounded-xl text-xs transition shadow-sm">
+                    Salva Modifica
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST MESSAGE NOTIFICATION -->
+    <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs font-medium px-4 py-2 rounded-full shadow-lg opacity-0 transition-opacity pointer-events-none flex items-center gap-2">
+        <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-400"></i>
+        <span id="toastMsg">Salvato con successo</span>
+    </div>
+
+    <!-- APP SCRIPT LOGIC -->
+    <script>
+        // --- MOTIVATIONAL QUOTES LIST ---
+        const MOTIVATIONAL_QUOTES = [
+            "Ogni scelta che fai a tavola è un atto d'amore verso te stessa! ✨",
+            "La costanza batte la perfezione, un passo alla volta. 💪",
+            "Nutri il tuo corpo con cura e lui ti ringrazierà con energia quotidiana! 🌿",
+            "Oggi è un nuovo giorno per avvicinarti ai tuoi obiettivi con serenità.",
+            "La vera disciplina è scegliere tra ciò che vuoi ora e ciò che vuoi di più. 💛",
+            "Non si tratta di rinunce, ma di scegliere di stare bene nel proprio corpo.",
+            "Piccoli cambiamenti quotidiani portano a risultati straordinari!"
+        ];
+
+        // --- ORIGINAL DIET DATA PRE-LOADED ---
+        const DEFAULT_DIET_PLAN = {
+            "Lunedì": {
+                "Colazione": "2 bicchieri d'acqua, 150ml latte parz. scremato con caffè amaro + 3 mini pancake (40g farina d'avena, 1 uovo, 40g yogurt magro bianco, 1 cucchiaio cocco rapè, 20g bevanda vegetale cocco/avena, 1/2 lievito, 1 cucchiaino miele) farcito con 1 cucchiaino crema nocciole 100% o yogurt.",
+                "Pranzo": "2 bicchieri d'acqua, 60g pasta con verdure cotte a piacere (bietole, cicoria, cavolfiore, broccoli, funghi, zucchine, zucca) + 150g salsiccia a piacere. Olio EVO 1 cucchiaio a crudo.",
+                "Spuntino": "Water reminder, Tisana depurativa/drenante + 1 yogurt magro bianco + 6-8 mandorle pelate o 2 noci.",
+                "Cena": "2 bicchieri d'acqua, Verdura cotta/cruda + 200g salmone fresco con granella di pistacchio OPPURE 80g tonno al naturale e 1 uovo sodo + 60g pane di segale/multicereale. 1 tsp olio EVO. 30g cioccolato fondente >70%."
+            },
+            "Martedì": {
+                "Colazione": "2 bicchieri d'acqua, 150ml latte parz. scremato + caffè amaro + 4 biscotti Magretti / Misura / Balocco all'avena.",
+                "Pranzo": "2 bicchieri d'acqua, 60g pasta con misto mare/cozze/gamberetti e verdure/pomodoro + 200-250g pesce (branzino, cernia, orata, merluzzo, sgombro, spigola) al forno/padella con limone. 1 tbsp olio EVO.",
+                "Spuntino": "Water reminder, Tisana + 1 monoporzione cracker Belle e Buone Galbusera o 40g snack legumi Veggy Good / Fiorentini (NO mais).",
+                "Cena": "2 bicchieri d'acqua, Verdura cruda + 150g fette carne (pollo, tacchino, lonza, vitello). 1 tsp olio EVO. 30g cioccolato fondente >70%."
+            },
+            "Mercoledì": {
+                "Colazione": "2 bicchieri d'acqua, 150ml latte parz. scremato + caffè + 3 mini pancake (stessa ricetta Lunedì).",
+                "Pranzo": "2 bicchieri d'acqua, 2 mestoli cotti legumi (ceci, lenticchie) con 30g riso parboiled + 4 fette bresaola/fesa tacchino e 30g grana. 1 tbsp olio EVO.",
+                "Spuntino": "Water reminder, Tisana + 1 yogurt magro bianco + 6-8 mandorle o 2 noci.",
+                "Cena": "2 bicchieri d'acqua, Verdure cotte + polpette (100-120g macinato, 1 uovo, 2 cucchiai grana) + 60g pane segale/multicereale. 1 tsp olio EVO. 30g cioccolato fondente >70%."
+            },
+            "Giovedì": {
+                "Colazione": "2 bicchieri d'acqua, 150ml latte parz. scremato + caffè amaro + 4 biscotti Magretti / Misura / Balocco all'avena.",
+                "Pranzo": "2 bicchieri d'acqua, 60g pasta con minestrone o verdure passate con 1 tsp grana + 150g fettine carne (bovino, manzo, vitello). 1 tbsp olio EVO.",
+                "Spuntino": "Water reminder, Tisana + 1 monoporzione cracker Belle e Buone o 40g snack legumi.",
+                "Cena": "2 bicchieri d'acqua, Verdure cotte + Frittata 2 uova, 1 tbsp grana e zucchine/spinaci (1 tbsp olio in cottura). 1 tsp olio EVO a crudo. 30g cioccolato fondente >70%."
+            },
+            "Venerdì": {
+                "Colazione": "2 bicchieri d'acqua, 150ml latte parz. scremato + caffè amaro + 3 mini pancake.",
+                "Pranzo": "2 bicchieri d'acqua, 2 mestoli cotti legumi con 30g riso parboiled + 4 fette bresaola/fesa tacchino. 1 tbsp olio EVO.",
+                "Spuntino": "Water reminder, Tisana + 1 yogurt magro bianco + 6-8 mandorle o 2 noci.",
+                "Cena": "2 bicchieri d'acqua, Verdura cotta e 150g patate lesse/forno + 200-250g pesce o 150g salmone o polpo OPPURE 150g hamburger a piacere. 1 tsp olio EVO. 30g cioccolato fondente >70%."
+            },
+            "Sabato": {
+                "Colazione": "2 bicchieri d'acqua, 150ml latte parz. scremato + caffè amaro + 4 biscotti all'avena.",
+                "Pranzo": "2 bicchieri d'acqua, 60g pasta con verdure o salsa pomodoro + 1 tsp grana + 80g tonno al naturale / 50g salmone affumicato / 2 uova omelette. 1 tbsp olio EVO.",
+                "Spuntino": "Water reminder, Tisana + 30g cioccolato fondente >70%.",
+                "Cena": "2 bicchieri d'acqua, PASTO LIBERO 🎉 (senza dolce)."
+            },
+            "Domenica": {
+                "Colazione": "2 bicchieri d'acqua, Colazione a piacere moderata.",
+                "Pranzo": "Giornata libera con moderazione (senza esagerare in quantità e qualità).",
+                "Spuntino": "Tisana o frutto a scelta.",
+                "Cena": "Cena leggera o libera con equilibrio."
+            }
+        };
+
+        // --- STATE MANAGEMENT ---
+        let dietPlan = {};
+        let currentDay = "Lunedì";
+        let checkedGrocery = {};
+        let customGroceryItems = [];
+        let groceryMode = 'weekly'; // 'weekly' or 'daily'
+        let weightLogs = [];
+        let editingMealKey = null;
+
+        // --- INITIALIZATION ON LOAD ---
+        window.onload = function() {
+            lucide.createIcons();
+            loadMotivationalQuote();
+            initData();
+            renderDayMeals();
+            renderGroceryList();
+            renderWeightLogs();
+            loadNotes();
+
+            // Set current date input default
+            document.getElementById('weightDate').valueAsDate = new Date();
+        };
+
+        function loadMotivationalQuote() {
+            const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+            const quoteIndex = dayOfYear % MOTIVATIONAL_QUOTES.length;
+            document.getElementById('motivationalQuote').innerText = `"${MOTIVATIONAL_QUOTES[quoteIndex]}"`;
+        }
+
+        function initData() {
+            // Load Diet Plan
+            const savedPlan = localStorage.getItem('olympia_diet_plan');
+            if (savedPlan) {
+                try {
+                    dietPlan = JSON.parse(savedPlan);
+                } catch(e) {
+                    dietPlan = JSON.parse(JSON.stringify(DEFAULT_DIET_PLAN));
+                }
+            } else {
+                dietPlan = JSON.parse(JSON.stringify(DEFAULT_DIET_PLAN));
+            }
+
+            // Load Grocery Checks
+            const savedGrocery = localStorage.getItem('olympia_grocery_checked');
+            if (savedGrocery) checkedGrocery = JSON.parse(savedGrocery);
+
+            // Load Custom Grocery Items
+            const savedCustomGrocery = localStorage.getItem('olympia_custom_grocery');
+            if (savedCustomGrocery) customGroceryItems = JSON.parse(savedCustomGrocery);
+
+            // Load Weight Logs
+            const savedWeights = localStorage.getItem('olympia_weight_logs');
+            if (savedWeights) {
+                weightLogs = JSON.parse(savedWeights);
+            } else {
+                // Pre-fill initial log for Olympia
+                weightLogs = [{ date: new Date().toISOString().split('T')[0], weight: 60.0, waist: '', hips: '' }];
+            }
+
+            // Auto select current day of the week
+            const daysMap = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'];
+            const today = daysMap[new Date().getDay()];
+            if (dietPlan[today]) {
+                selectDay(today);
+            }
+        }
+
+        function saveData(key, data) {
+            localStorage.setItem(key, JSON.stringify(data));
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            toast.classList.remove('opacity-0');
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+            }, 2000);
+        }
+
+        // --- NAVIGATION TABS ---
+        function switchTab(tabId) {
+            const tabs = ['piano', 'spesa', 'progressi', 'note', 'info'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`tab-${t}`);
+                const nav = document.getElementById(`nav-${t}`);
+                if (t === tabId) {
+                    el.classList.remove('hidden');
+                    nav.classList.remove('text-slate-400', 'font-medium');
+                    nav.classList.add('text-amber-600', 'font-bold');
+                } else {
+                    el.classList.add('hidden');
+                    nav.classList.remove('text-amber-600', 'font-bold');
+                    nav.classList.add('text-slate-400', 'font-medium');
+                }
+            });
+
+            if (tabId === 'spesa') renderGroceryList();
+            if (tabId === 'progressi') drawWeightChart();
+            if (tabId === 'note') loadNotes();
+        }
+
+        // --- DAY SELECTION & MEALS RENDER ---
+        function selectDay(day) {
+            currentDay = day;
+            document.getElementById('currentDayTitle').innerText = day;
+            document.getElementById('dayNoteName').innerText = day;
+
+            // Update UI Day buttons
+            document.querySelectorAll('.day-btn').forEach(btn => {
+                if (btn.getAttribute('data-day') === day) {
+                    btn.classList.remove('bg-white', 'text-slate-600', 'border-slate-200');
+                    btn.classList.add('bg-amber-400', 'text-slate-900', 'border-amber-400');
+                } else {
+                    btn.classList.remove('bg-amber-400', 'text-slate-900', 'border-amber-400');
+                    btn.classList.add('bg-white', 'text-slate-600', 'border-slate-200');
+                }
+            });
+
+            renderDayMeals();
+            loadNotes();
+        }
+
+        function renderDayMeals() {
+            const container = document.getElementById('mealsContainer');
+            container.innerHTML = '';
+
+            const dayData = dietPlan[currentDay] || {};
+            const mealsOrder = ['Colazione', 'Pranzo', 'Spuntino', 'Cena'];
+
+            const mealIcons = {
+                'Colazione': 'coffee',
+                'Pranzo': 'sun',
+                'Spuntino': 'apple',
+                'Cena': 'moon'
+            };
+
+            mealsOrder.forEach(mealKey => {
+                const text = dayData[mealKey] || 'Nessun dettaglio presente.';
+                const icon = mealIcons[mealKey] || 'utensils';
+
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl p-4 border border-slate-100 shadow-sm relative space-y-2 group";
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="p-1.5 rounded-lg bg-amber-100 text-amber-800">
+                                <i data-lucide="${icon}" class="w-4 h-4"></i>
+                            </span>
+                            <h3 class="font-bold text-sm text-slate-800 uppercase tracking-wide">${mealKey}</h3>
+                        </div>
+                        <button onclick="openEditModal('${mealKey}')" class="text-xs bg-amber-50 hover:bg-amber-100 text-amber-800 font-medium px-2.5 py-1 rounded-lg transition flex items-center gap-1 border border-amber-200/50">
+                            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Modifica
+                        </button>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed pt-1">${escapeHtml(text)}</p>
+                `;
+
+                container.appendChild(card);
+            });
+
+            lucide.createIcons();
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // --- EDIT MEAL MODAL ---
+        function openEditModal(mealKey) {
+            editingMealKey = mealKey;
+            document.getElementById('modalMealCategory').innerText = currentDay.toUpperCase();
+            document.getElementById('modalMealTitle').innerText = `Modifica ${mealKey}`;
+            document.getElementById('modalMealInput').value = dietPlan[currentDay][mealKey] || '';
+            document.getElementById('editModal').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+            editingMealKey = null;
+        }
+
+        function saveMealEdit() {
+            if (!editingMealKey) return;
+            const newText = document.getElementById('modalMealInput').value.trim();
+            if (newText) {
+                dietPlan[currentDay][editingMealKey] = newText;
+                saveData('olympia_diet_plan', dietPlan);
+                renderDayMeals();
+                closeEditModal();
+                showToast("Menù aggiornato!");
+            }
+        }
+
+        function resetMealToDefault() {
+            if (!editingMealKey) return;
+            if (DEFAULT_DIET_PLAN[currentDay] && DEFAULT_DIET_PLAN[currentDay][editingMealKey]) {
+                dietPlan[currentDay][editingMealKey] = DEFAULT_DIET_PLAN[currentDay][editingMealKey];
+                saveData('olympia_diet_plan', dietPlan);
+                renderDayMeals();
+                closeEditModal();
+                showToast("Pasto ripristinato!");
+            }
+        }
+
+        function resetCurrentDay() {
+            if (confirm(`Vuoi ripristinare il menù originale per ${currentDay}?`)) {
+                dietPlan[currentDay] = JSON.parse(JSON.stringify(DEFAULT_DIET_PLAN[currentDay]));
+                saveData('olympia_diet_plan', dietPlan);
+                renderDayMeals();
+                showToast(`Menù di ${currentDay} ripristinato`);
+            }
+        }
+
+        function resetAllData() {
+            if (confirm("Sei sicura di voler ripristinare l'intero piano alimentare originale? Tutte le modifiche ai pasti verranno annullate.")) {
+                dietPlan = JSON.parse(JSON.stringify(DEFAULT_DIET_PLAN));
+                saveData('olympia_diet_plan', dietPlan);
+                renderDayMeals();
+                showToast("Piano alimentare ripristinato!");
+            }
+        }
+
+        // --- GROCERY LIST LOGIC ---
+        function switchGroceryMode(mode) {
+            groceryMode = mode;
+            document.getElementById('btn-groc-weekly').className = mode === 'weekly' ? 'flex-1 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition' : 'flex-1 py-1.5 rounded-lg transition';
+            document.getElementById('btn-groc-daily').className = mode === 'daily' ? 'flex-1 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition' : 'flex-1 py-1.5 rounded-lg transition';
+            renderGroceryList();
+        }
+
+        function generateGroceryItems() {
+            const items = new Set();
+            const daysToProcess = groceryMode === 'weekly' ? Object.keys(dietPlan) : [currentDay];
+
+            daysToProcess.forEach(day => {
+                const dayObj = dietPlan[day];
+                Object.values(dayObj).forEach(text => {
+                    // Quick keywords extractor for simple clean list
+                    const keywords = [
+                        'latte parz. scremato', 'farina d\'avena', 'uovo', 'uova', 'yogurt magro bianco', 
+                        'cocco rapè', 'bevanda vegetale', 'miele', 'crema nocciole 100%', 'biscotti Magretti', 
+                        'pasta', 'verdure cotte', 'salsiccia', 'olio EVO', 'misto mare', 'cozze', 'gamberetti', 
+                        'pesce (branzino/orata/merluzzo)', 'tisana', 'mandorle', 'noci', 'cracker', 'snack legumi', 
+                        'salmone fresco', 'tonno al naturale', 'pane di segale', 'cioccolato fondente >70%', 
+                        'fette carne (pollo/tacchino)', 'legumi (ceci/lenticchie)', 'riso parboiled', 'bresaola', 
+                        'fesa tacchino', 'grana', 'macinato', 'minestrone', 'patate', 'hamburger', 'polpo'
+                    ];
+
+                    keywords.forEach(kw => {
+                        if (text.toLowerCase().includes(kw.toLowerCase())) {
+                            items.add(kw);
+                        }
+                    });
+                });
+            });
+
+            return Array.from(items);
+        }
+
+        function renderGroceryList() {
+            const container = document.getElementById('groceryListContainer');
+            container.innerHTML = '';
+
+            const items = generateGroceryItems();
+
+            if (items.length === 0 && customGroceryItems.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Nessun ingrediente trovato.</p>`;
+                return;
+            }
+
+            // Render Standard Diet Ingredients
+            if (items.length > 0) {
+                const sectionTitle = document.createElement('h4');
+                sectionTitle.className = "text-[11px] font-bold text-amber-800 uppercase tracking-wider mb-2";
+                sectionTitle.innerText = groceryMode === 'weekly' ? "Ingredienti del Menù Settimanale" : `Ingredienti per ${currentDay}`;
+                container.appendChild(sectionTitle);
+
+                items.forEach(item => {
+                    const id = `groc_${item.replace(/\s+/g, '_')}`;
+                    const checked = !!checkedGrocery[id];
+
+                    const row = document.createElement('div');
+                    row.className = "flex items-center justify-between py-1.5 border-b border-slate-50 last:border-none";
+                    row.innerHTML = `
+                        <label class="flex items-center gap-2 text-xs text-slate-700 cursor-pointer flex-1">
+                            <input type="checkbox" onchange="toggleGroceryCheck('${id}')" ${checked ? 'checked' : ''} class="w-4 h-4 rounded border-slate-300 text-amber-500 focus:ring-amber-400">
+                            <span class="${checked ? 'line-through text-slate-400' : ''}">${item}</span>
+                        </label>
+                    `;
+                    container.appendChild(row);
+                });
+            }
+
+            // Render Custom Added Items
+            if (customGroceryItems.length > 0) {
+                const customTitle = document.createElement('h4');
+                customTitle.className = "text-[11px] font-bold text-amber-800 uppercase tracking-wider mt-4 mb-2";
+                customTitle.innerText = "Prodotti Extra Aggiunti";
+                container.appendChild(customTitle);
+
+                customGroceryItems.forEach((item, idx) => {
+                    const id = `custom_groc_${idx}`;
+                    const checked = !!checkedGrocery[id];
+
+                    const row = document.createElement('div');
+                    row.className = "flex items-center justify-between py-1.5 border-b border-slate-50 last:border-none";
+                    row.innerHTML = `
+                        <label class="flex items-center gap-2 text-xs text-slate-700 cursor-pointer flex-1">
+                            <input type="checkbox" onchange="toggleGroceryCheck('${id}')" ${checked ? 'checked' : ''} class="w-4 h-4 rounded border-slate-300 text-amber-500 focus:ring-amber-400">
+                            <span class="${checked ? 'line-through text-slate-400' : ''}">${escapeHtml(item)}</span>
+                        </label>
+                        <button onclick="removeCustomGrocery(${idx})" class="text-slate-300 hover:text-rose-500 p-1">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        </button>
+                    `;
+                    container.appendChild(row);
+                });
+            }
+
+            lucide.createIcons();
+        }
+
+        function toggleGroceryCheck(id) {
+            checkedGrocery[id] = !checkedGrocery[id];
+            saveData('olympia_grocery_checked', checkedGrocery);
+            renderGroceryList();
+        }
+
+        function addCustomGroceryItem(e) {
+            e.preventDefault();
+            const input = document.getElementById('customGroceryInput');
+            const val = input.value.trim();
+            if (val) {
+                customGroceryItems.push(val);
+                saveData('olympia_custom_grocery', customGroceryItems);
+                input.value = '';
+                renderGroceryList();
+                showToast("Aggiunto alla spesa");
+            }
+        }
+
+        function removeCustomGrocery(index) {
+            customGroceryItems.splice(index, 1);
+            saveData('olympia_custom_grocery', customGroceryItems);
+            renderGroceryList();
+        }
+
+        function clearCheckedGrocery() {
+            checkedGrocery = {};
+            saveData('olympia_grocery_checked', checkedGrocery);
+            renderGroceryList();
+            showToast("Lista spesa pulita");
+        }
+
+        function generateDailyGrocery() {
+            switchGroceryMode('daily');
+            switchTab('spesa');
+        }
+
+        // --- WEIGHT TRACKING LOGIC & HTML5 CANVAS GRAPH ---
+        function saveWeightLog(e) {
+            e.preventDefault();
+            const date = document.getElementById('weightDate').value;
+            const weight = parseFloat(document.getElementById('weightValue').value);
+            const waist = document.getElementById('waistValue').value;
+            const hips = document.getElementById('hipsValue').value;
+
+            if (date && !isNaN(weight)) {
+                // Remove existing if same date
+                weightLogs = weightLogs.filter(l => l.date !== date);
+                weightLogs.push({ date, weight, waist, hips });
+                weightLogs.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                saveData('olympia_weight_logs', weightLogs);
+                document.getElementById('weightValue').value = '';
+                document.getElementById('waistValue').value = '';
+                document.getElementById('hipsValue').value = '';
+                
+                renderWeightLogs();
+                drawWeightChart();
+                showToast("Peso registrato!");
+            }
+        }
+
+        function removeWeightLog(index) {
+            weightLogs.splice(index, 1);
+            saveData('olympia_weight_logs', weightLogs);
+            renderWeightLogs();
+            drawWeightChart();
+        }
+
+        function renderWeightLogs() {
+            const container = document.getElementById('weightHistoryContainer');
+            container.innerHTML = '';
+
+            if (weightLogs.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-3">Nessun dato inserito.</p>`;
+                return;
+            }
+
+            const sorted = [...weightLogs].reverse();
+            sorted.forEach((log, idx) => {
+                const originalIndex = weightLogs.indexOf(log);
+                const row = document.createElement('div');
+                row.className = "flex items-center justify-between py-2 text-xs";
+                row.innerHTML = `
+                    <div>
+                        <span class="font-semibold text-slate-700">${log.date}</span>
+                        <div class="text-[10px] text-slate-400">
+                            ${log.waist ? `Vita: ${log.waist}cm ` : ''}${log.hips ? `| Fianchi: ${log.hips}cm` : ''}
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="font-bold text-amber-600 font-mono text-sm">${log.weight} kg</span>
+                        <button onclick="removeWeightLog(${originalIndex})" class="text-slate-300 hover:text-rose-500">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+
+            // Update stats
+            if (weightLogs.length > 1) {
+                const diff = (weightLogs[weightLogs.length - 1].weight - weightLogs[0].weight).toFixed(1);
+                const sign = diff > 0 ? '+' : '';
+                document.getElementById('weightStats').innerText = `Totale: ${sign}${diff} kg`;
+            } else {
+                document.getElementById('weightStats').innerText = '';
+            }
+
+            lucide.createIcons();
+        }
+
+        function drawWeightChart() {
+            const canvas = document.getElementById('weightChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            // Handle retina displays & resizing
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * window.devicePixelRatio;
+            canvas.height = rect.height * window.devicePixelRatio;
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+            const width = rect.width;
+            const height = rect.height;
+
+            ctx.clearRect(0, 0, width, height);
+
+            if (weightLogs.length < 2) {
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = '12px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('Inserisci almeno 2 misurazioni per visualizzare il grafico', width / 2, height / 2);
+                return;
+            }
+
+            const weights = weightLogs.map(l => l.weight);
+            const minW = Math.min(...weights) - 1;
+            const maxW = Math.max(...weights) + 1;
+
+            const padding = 30;
+            const graphWidth = width - padding * 2;
+            const graphHeight = height - padding * 2;
+
+            // Draw background grid lines
+            ctx.strokeStyle = '#f1f5f9';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 4; i++) {
+                const y = padding + (graphHeight / 4) * i;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(width - padding, y);
+                ctx.stroke();
+            }
+
+            // Draw line
+            ctx.beginPath();
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 3;
+
+            const points = weightLogs.map((log, index) => {
+                const x = padding + (graphWidth / (weightLogs.length - 1)) * index;
+                const y = height - padding - ((log.weight - minW) / (maxW - minW)) * graphHeight;
+                return { x, y, weight: log.weight, date: log.date };
+            });
+
+            points.forEach((pt, idx) => {
+                if (idx === 0) ctx.moveTo(pt.x, pt.y);
+                else ctx.lineTo(pt.x, pt.y);
+            });
+            ctx.stroke();
+
+            // Draw points & labels
+            points.forEach((pt) => {
+                ctx.beginPath();
+                ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = '#d97706';
+                ctx.fill();
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = '#ffffff';
+                ctx.stroke();
+
+                // Draw value
+                ctx.fillStyle = '#334155';
+                ctx.font = '10px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${pt.weight}`, pt.x, pt.y - 8);
+            });
+        }
+
+        // --- NOTES LOGIC ---
+        function loadNotes() {
+            const genNotes = localStorage.getItem('olympia_general_notes') || '';
+            document.getElementById('generalNotes').value = genNotes;
+
+            const dayNotesObj = JSON.parse(localStorage.getItem('olympia_day_notes') || '{}');
+            document.getElementById('dayNotes').value = dayNotesObj[currentDay] || '';
+        }
+
+        function saveGeneralNotes() {
+            const val = document.getElementById('generalNotes').value;
+            localStorage.setItem('olympia_general_notes', val);
+        }
+
+        function saveDayNotes() {
+            const val = document.getElementById('dayNotes').value;
+            const dayNotesObj = JSON.parse(localStorage.getItem('olympia_day_notes') || '{}');
+            dayNotesObj[currentDay] = val;
+            localStorage.setItem('olympia_day_notes', JSON.stringify(dayNotesObj));
+        }
+
+        // Redraw canvas on window resize
+        window.onresize = function() {
+            if (!document.getElementById('tab-progressi').classList.contains('hidden')) {
+                drawWeightChart();
+            }
+        };
+    </script>
+</body>
+</html>
