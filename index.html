@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it" class="h-full bg-slate-900">
+<html lang="it" class="h-full dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -7,9 +7,9 @@
     
     <!-- PWA & Mobile Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Piano Olympia">
-    <meta name="theme-color" content="#1e293b">
+    <meta name="theme-color" content="#fef3c7" id="theme-color-meta">
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -44,55 +44,61 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* Safe Area Padding per iPhone */
+        /* Safe Area Padding per iPhone Safari */
         .pb-safe {
-            padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 20px));
+            padding-bottom: calc(6rem + env(safe-area-inset-bottom, 24px));
         }
         .mb-safe {
             margin-bottom: env(safe-area-inset-bottom, 0px);
         }
-        /* Custom Scrollbar */
+        /* Custom Scrollbars */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.6);
+            background: transparent;
         }
         ::-webkit-scrollbar-thumb {
-            background: #d97706;
+            background: #f59e0b;
             border-radius: 9999px;
         }
     </style>
 </head>
-<body class="h-full bg-slate-900 text-slate-100 font-sans antialiased selection:bg-amber-500 selection:text-slate-900 flex flex-col min-h-screen">
+<body class="h-full bg-amber-50/60 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans antialiased selection:bg-amber-400 selection:text-slate-900 flex flex-col min-h-screen transition-colors duration-200">
 
     <!-- TOP BAR / HEADER -->
-    <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-amber-500/20 px-4 py-3 flex items-center justify-between shadow-lg">
+    <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-amber-200 dark:border-amber-500/20 px-4 py-3 flex items-center justify-between shadow-sm dark:shadow-lg">
         <div class="flex items-center space-x-3">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center shadow-md shadow-amber-500/20 text-slate-900 font-bold text-xl">
                 <i class="fa-solid font-black fa-apple-whole text-slate-950"></i>
             </div>
             <div>
-                <h1 class="text-base font-bold tracking-tight text-slate-100 leading-tight">Piano Alimentare</h1>
-                <p class="text-xs font-medium text-amber-400/90">Olympia Marzano</p>
+                <h1 class="text-base font-bold tracking-tight text-slate-900 dark:text-slate-100 leading-tight">Piano Alimentare</h1>
+                <p class="text-xs font-semibold text-amber-600 dark:text-amber-400">Olympia Marzano</p>
             </div>
         </div>
         
         <div class="flex items-center space-x-2">
-            <button onclick="switchTab('guidelines')" class="px-2.5 py-1.5 rounded-lg bg-slate-800 text-amber-400 border border-amber-500/30 text-xs font-semibold hover:bg-slate-700 transition flex items-center gap-1.5">
+            <!-- Pulsante Cambio Tema Giorno / Notte -->
+            <button onclick="toggleTheme()" id="themeToggleBtn" aria-label="Cambia Modalità" class="w-9 h-9 rounded-xl bg-amber-100 dark:bg-slate-800 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-500/30 flex items-center justify-center hover:scale-105 transition active:scale-95 shadow-sm">
+                <i class="fa-solid fa-sun text-base dark:hidden"></i>
+                <i class="fa-solid fa-moon text-base hidden dark:block"></i>
+            </button>
+
+            <button onclick="switchTab('guidelines')" class="px-2.5 py-1.5 rounded-xl bg-amber-100 dark:bg-slate-800 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-500/30 text-xs font-bold hover:bg-amber-200 dark:hover:bg-slate-700 transition flex items-center gap-1.5 shadow-sm">
                 <i class="fa-solid fa-file-medical"></i>
                 <span class="hidden sm:inline">Info & Regole</span>
             </button>
         </div>
     </header>
 
-    <!-- MOTIVATIONAL QUOTE BANNER -->
-    <section class="bg-gradient-to-r from-amber-500/10 via-amber-400/15 to-amber-500/10 border-b border-amber-500/20 px-4 py-2.5 text-center relative overflow-hidden">
-        <div class="max-w-xl mx-auto flex items-center justify-center gap-2 text-amber-300 text-xs sm:text-sm font-medium italic">
-            <i class="fa-solid fa-quote-left text-amber-500/50 text-xs"></i>
-            <span id="dailyQuote">Caricamento frase motivazionale...</span>
-            <i class="fa-solid fa-quote-right text-amber-500/50 text-xs"></i>
+    <!-- MOTIVATIONAL QUOTE BANNER (Senza taglio testo) -->
+    <section class="bg-amber-100/80 dark:bg-gradient-to-r dark:from-amber-500/10 dark:via-amber-400/15 dark:to-amber-500/10 border-b border-amber-200 dark:border-amber-500/20 px-4 py-3 text-center">
+        <div class="max-w-xl mx-auto flex items-center justify-center gap-2 text-amber-900 dark:text-amber-300 text-xs sm:text-sm font-medium italic leading-normal">
+            <i class="fa-solid fa-quote-left text-amber-500/60 dark:text-amber-500/50 text-xs shrink-0"></i>
+            <span id="dailyQuote" class="break-words">Caricamento frase motivazionale...</span>
+            <i class="fa-solid fa-quote-right text-amber-500/60 dark:text-amber-500/50 text-xs shrink-0"></i>
         </div>
     </section>
 
@@ -104,27 +110,27 @@
             
             <!-- GIORNI NAVBAR SLIDER -->
             <div class="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none snap-x">
-                <button onclick="selectDay('lunedì')" id="btn-lunedì" class="day-btn snap-start shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition-all border border-amber-500/30 bg-slate-800 text-slate-300">LUN</button>
-                <button onclick="selectDay('martedì')" id="btn-martedì" class="day-btn snap-start shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition-all border border-amber-500/30 bg-slate-800 text-slate-300">MAR</button>
-                <button onclick="selectDay('mercoledì')" id="btn-mercoledì" class="day-btn snap-start shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition-all border border-amber-500/30 bg-slate-800 text-slate-300">MER</button>
-                <button onclick="selectDay('giovedì')" id="btn-giovedì" class="day-btn snap-start shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition-all border border-amber-500/30 bg-slate-800 text-slate-300">GIO</button>
-                <button onclick="selectDay('venerdì')" id="btn-venerdì" class="day-btn snap-start shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition-all border border-amber-500/30 bg-slate-800 text-slate-300">VEN</button>
-                <button onclick="selectDay('sabato')" id="btn-sabato" class="day-btn snap-start shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition-all border border-amber-500/30 bg-slate-800 text-slate-300">SAB</button>
-                <button onclick="selectDay('domenica')" id="btn-domenica" class="day-btn snap-start shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition-all border border-amber-500/30 bg-slate-800 text-slate-300">DOM</button>
+                <button onclick="selectDay('lunedì')" id="btn-lunedì" class="day-btn snap-start shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition-all border border-amber-300 dark:border-amber-500/30 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-sm">LUN</button>
+                <button onclick="selectDay('martedì')" id="btn-martedì" class="day-btn snap-start shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition-all border border-amber-300 dark:border-amber-500/30 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-sm">MAR</button>
+                <button onclick="selectDay('mercoledì')" id="btn-mercoledì" class="day-btn snap-start shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition-all border border-amber-300 dark:border-amber-500/30 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-sm">MER</button>
+                <button onclick="selectDay('giovedì')" id="btn-giovedì" class="day-btn snap-start shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition-all border border-amber-300 dark:border-amber-500/30 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-sm">GIO</button>
+                <button onclick="selectDay('venerdì')" id="btn-venerdì" class="day-btn snap-start shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition-all border border-amber-300 dark:border-amber-500/30 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-sm">VEN</button>
+                <button onclick="selectDay('sabato')" id="btn-sabato" class="day-btn snap-start shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition-all border border-amber-300 dark:border-amber-500/30 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-sm">SAB</button>
+                <button onclick="selectDay('domenica')" id="btn-domenica" class="day-btn snap-start shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition-all border border-amber-300 dark:border-amber-500/30 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-sm">DOM</button>
             </div>
 
             <!-- HEADER GIORNO SELEZIONATO CON TASTI AZIONE -->
-            <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-4 shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div class="bg-white dark:bg-slate-800/80 border border-amber-200 dark:border-slate-700/80 rounded-2xl p-4 shadow-md dark:shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div>
-                    <span class="text-xs font-semibold text-amber-400 uppercase tracking-wider">Menù del giorno</span>
-                    <h2 id="selectedDayTitle" class="text-2xl font-black text-slate-100 capitalize">Lunedì</h2>
+                    <span class="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Menù del giorno</span>
+                    <h2 id="selectedDayTitle" class="text-2xl font-black text-slate-900 dark:text-slate-100 capitalize">Lunedì</h2>
                 </div>
                 <div class="flex items-center gap-2 w-full sm:w-auto">
-                    <button onclick="openEditModal()" class="flex-1 sm:flex-none px-3 py-2 rounded-xl bg-amber-500/10 border border-amber-500/40 text-amber-400 hover:bg-amber-500/20 transition text-xs font-bold flex items-center justify-center gap-1.5">
+                    <button onclick="openEditModal()" class="flex-1 sm:flex-none px-3 py-2 rounded-xl bg-amber-100 dark:bg-amber-500/10 border border-amber-300 dark:border-amber-500/40 text-amber-900 dark:text-amber-400 hover:bg-amber-200 dark:hover:bg-amber-500/20 transition text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm">
                         <i class="fa-solid fa-pen-to-square"></i>
                         <span>Modifica Pasti</span>
                     </button>
-                    <button onclick="openDailyGroceryModal()" class="flex-1 sm:flex-none px-3 py-2 rounded-xl bg-amber-500 text-slate-950 hover:bg-amber-400 font-bold transition text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-amber-500/20">
+                    <button onclick="openDailyGroceryModal()" class="flex-1 sm:flex-none px-3 py-2 rounded-xl bg-amber-500 text-slate-950 hover:bg-amber-400 font-bold transition text-xs flex items-center justify-center gap-1.5 shadow-md shadow-amber-500/20">
                         <i class="fa-solid fa-cart-shopping"></i>
                         <span>Spesa del Giorno</span>
                     </button>
@@ -137,26 +143,26 @@
             </div>
 
             <!-- NOTE DEL GIORNO -->
-            <div class="bg-slate-800/60 border border-slate-700/70 rounded-2xl p-4 space-y-2 shadow-lg">
+            <div class="bg-white dark:bg-slate-800/60 border border-amber-200 dark:border-slate-700/70 rounded-2xl p-4 space-y-2 shadow-md dark:shadow-lg">
                 <div class="flex items-center justify-between">
-                    <label for="dailyNoteInput" class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                    <label for="dailyNoteInput" class="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider flex items-center gap-2">
                         <i class="fa-solid fa-sticky-note"></i> Note per questo giorno
                     </label>
-                    <span id="noteSaveStatus" class="text-[10px] text-emerald-400 font-medium opacity-0 transition-opacity">Salvato!</span>
+                    <span id="noteSaveStatus" class="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold opacity-0 transition-opacity">Salvato!</span>
                 </div>
-                <textarea id="dailyNoteInput" oninput="saveDailyNote()" rows="2" placeholder="Aggiungi qui eventuali note personalizzate (es. orari, sostituzioni, sensazioni...)" class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl p-3 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500 transition resize-none"></textarea>
+                <textarea id="dailyNoteInput" oninput="saveDailyNote()" rows="3" placeholder="Aggiungi qui eventuali note personalizzate (es. orari, sostituzioni, sensazioni...)" class="w-full bg-amber-50/50 dark:bg-slate-900/80 border border-amber-200 dark:border-slate-700/80 rounded-xl p-3 text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-amber-500 transition resize-none"></textarea>
             </div>
 
         </div>
 
         <!-- TAB 2: SPESA SETTIMANALE -->
         <div id="tab-grocery" class="hidden space-y-4">
-            <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-4 shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div class="bg-white dark:bg-slate-800/80 border border-amber-200 dark:border-slate-700/80 rounded-2xl p-4 shadow-md dark:shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div>
-                    <span class="text-xs font-semibold text-amber-400 uppercase tracking-wider">Pianificazione</span>
-                    <h2 class="text-2xl font-black text-slate-100">Spesa Settimanale</h2>
+                    <span class="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Pianificazione</span>
+                    <h2 class="text-2xl font-black text-slate-900 dark:text-slate-100">Spesa Settimanale</h2>
                 </div>
-                <button onclick="copyWeeklyGroceryList()" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 transition text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20">
+                <button onclick="copyWeeklyGroceryList()" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 transition text-xs flex items-center justify-center gap-2 shadow-md shadow-amber-500/20">
                     <i class="fa-solid fa-copy"></i>
                     <span>Copia Lista Testo</span>
                 </button>
@@ -169,38 +175,38 @@
 
         <!-- TAB 3: TRACCIAMENTO PESO -->
         <div id="tab-progress" class="hidden space-y-4">
-            <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-4 shadow-xl">
-                <span class="text-xs font-semibold text-amber-400 uppercase tracking-wider">Monitoraggio</span>
-                <h2 class="text-2xl font-black text-slate-100">Progressi Peso</h2>
-                <p class="text-xs text-slate-400 mt-1">Registra le tue misurazioni per monitorare i tuoi miglioramenti nel tempo.</p>
+            <div class="bg-white dark:bg-slate-800/80 border border-amber-200 dark:border-slate-700/80 rounded-2xl p-4 shadow-md dark:shadow-xl">
+                <span class="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Monitoraggio</span>
+                <h2 class="text-2xl font-black text-slate-900 dark:text-slate-100">Progressi Peso</h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Registra le tue misurazioni per monitorare i tuoi miglioramenti nel tempo.</p>
             </div>
 
             <!-- FORM NUOVA REGISTRAZIONE -->
-            <form onsubmit="addWeightEntry(event)" class="bg-slate-800/60 border border-slate-700/70 rounded-2xl p-4 shadow-lg flex flex-col sm:flex-row items-end gap-3">
+            <form onsubmit="addWeightEntry(event)" class="bg-white dark:bg-slate-800/60 border border-amber-200 dark:border-slate-700/70 rounded-2xl p-4 shadow-md dark:shadow-lg flex flex-col sm:flex-row items-end gap-3">
                 <div class="flex-1 w-full">
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">Data</label>
-                    <input type="date" id="weightDate" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-100 focus:outline-none focus:border-amber-500">
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Data</label>
+                    <input type="date" id="weightDate" required class="w-full bg-amber-50/50 dark:bg-slate-900 border border-amber-200 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-amber-500">
                 </div>
                 <div class="flex-1 w-full">
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">Peso (kg)</label>
-                    <input type="number" step="0.1" id="weightVal" placeholder="es. 62.5" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-100 focus:outline-none focus:border-amber-500">
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Peso (kg)</label>
+                    <input type="number" step="0.1" id="weightVal" placeholder="es. 62.5" required class="w-full bg-amber-50/50 dark:bg-slate-900 border border-amber-200 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-amber-500">
                 </div>
-                <button type="submit" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 transition text-xs shadow-lg shadow-amber-500/20 shrink-0">
+                <button type="submit" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 transition text-xs shadow-md shadow-amber-500/20 shrink-0">
                     <i class="fa-solid fa-plus mr-1"></i> Aggiungi
                 </button>
             </form>
 
             <!-- GRAFICO -->
-            <div class="bg-slate-800/60 border border-slate-700/70 rounded-2xl p-4 shadow-lg">
-                <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider mb-3">Andamento grafico</h3>
+            <div class="bg-white dark:bg-slate-800/60 border border-amber-200 dark:border-slate-700/70 rounded-2xl p-4 shadow-md dark:shadow-lg">
+                <h3 class="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider mb-3">Andamento grafico</h3>
                 <div class="relative h-60 w-full">
                     <canvas id="weightChart"></canvas>
                 </div>
             </div>
 
             <!-- STORICO PESI -->
-            <div class="bg-slate-800/60 border border-slate-700/70 rounded-2xl p-4 shadow-lg space-y-2">
-                <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">Storico Misurazioni</h3>
+            <div class="bg-white dark:bg-slate-800/60 border border-amber-200 dark:border-slate-700/70 rounded-2xl p-4 shadow-md dark:shadow-lg space-y-2">
+                <h3 class="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider mb-2">Storico Misurazioni</h3>
                 <div id="weightHistory" class="space-y-2 max-h-48 overflow-y-auto pr-1">
                     <!-- Iniettato via JS -->
                 </div>
@@ -209,57 +215,58 @@
 
         <!-- TAB 4: LINEE GUIDA & INFO -->
         <div id="tab-guidelines" class="hidden space-y-4">
-            <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-4 shadow-xl">
-                <span class="text-xs font-semibold text-amber-400 uppercase tracking-wider">Indicazioni Nutrizionali</span>
-                <h2 class="text-2xl font-black text-slate-100">Dott.ssa Alessia Paradiso</h2>
-                <p class="text-xs text-slate-400 mt-1">Regole generali e suggerimenti per il massimo benessere.</p>
+            <div class="bg-white dark:bg-slate-800/80 border border-amber-200 dark:border-slate-700/80 rounded-2xl p-4 shadow-md dark:shadow-xl">
+                <span class="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Indicazioni Nutrizionali</span>
+                <h2 class="text-2xl font-black text-slate-900 dark:text-slate-100">Dott.ssa Alessia Paradiso</h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Regole generali e suggerimenti per il massimo benessere.</p>
             </div>
 
             <div class="space-y-3">
-                <div class="bg-slate-800/60 border border-slate-700/70 rounded-2xl p-4 space-y-2">
-                    <h3 class="text-sm font-bold text-amber-400 flex items-center gap-2">
-                        <i class="fa-solid fa-droplet"></i> Idratazione & Raccomandazioni
+                <div class="bg-white dark:bg-slate-800/60 border border-amber-200 dark:border-slate-700/70 rounded-2xl p-4 space-y-2 shadow-sm">
+                    <h3 class="text-sm font-bold text-amber-700 dark:text-amber-400 flex items-center gap-2">
+                        <i class="fa-solid fa-droplet text-amber-500"></i> Idratazione & Raccomandazioni
                     </h3>
-                    <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                    <ul class="text-xs text-slate-700 dark:text-slate-300 space-y-1.5 list-disc list-inside">
                         <li>Bere almeno <strong>2 Litri di acqua</strong> diluiti durante tutta la giornata.</li>
-                        <li>Limitare l'assunzione di caffè, zucchero semplice e sale.</li>
+                        <li>Limitare l'assunzione di caffè, dello zucchero semplice e del sale.</li>
                         <li>Insaporire i piatti con spezie (curcuma, paprika, pepe, rosmarino, noce moscata, curry), limone e aceto di mele o vino.</li>
-                        <li>Masticare lentamente: la digestione inizia dalla bocca ed evita gonfiori.</li>
-                        <li>Evitare la sedentarietà, svolgendo movimento per almeno 40 minuti al giorno.</li>
+                        <li>Masticare lentamente: la digestione inizia dalla bocca ed evita eventi fermentativi.</li>
+                        <li>Evitare la sedentarietà, svolgere movimento per almeno 40 minuti.</li>
                         <li>È possibile invertire il pranzo con la cena.</li>
                     </ul>
                 </div>
 
-                <div class="bg-slate-800/60 border border-slate-700/70 rounded-2xl p-4 space-y-2">
-                    <h3 class="text-sm font-bold text-amber-400 flex items-center gap-2">
-                        <i class="fa-solid fa-fire"></i> Modalità di Cottura Consigliate
+                <div class="bg-white dark:bg-slate-800/60 border border-amber-200 dark:border-slate-700/70 rounded-2xl p-4 space-y-2 shadow-sm">
+                    <h3 class="text-sm font-bold text-amber-700 dark:text-amber-400 flex items-center gap-2">
+                        <i class="fa-solid fa-fire text-amber-500"></i> Modalità di Cottura
                     </h3>
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <div class="bg-slate-900/50 p-2.5 rounded-xl border border-emerald-500/20 text-emerald-300">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                        <div class="bg-emerald-50 dark:bg-slate-900/50 p-3 rounded-xl border border-emerald-300 dark:border-emerald-500/20 text-emerald-900 dark:text-emerald-300">
                             <strong>Consigliate:</strong>
-                            <ul class="mt-1 space-y-1 list-disc list-inside text-slate-300 text-[11px]">
-                                <li>Al Vapore / Lessatura</li>
-                                <li>Forno a basse temp.</li>
+                            <ul class="mt-1 space-y-1 list-disc list-inside text-slate-700 dark:text-slate-300 text-[11px]">
+                                <li>Vapore</li>
+                                <li>Bollitura / Lessatura</li>
+                                <li>Forno a basse temperature</li>
                                 <li>Padella antiaderente con poca acqua o poco olio EVO</li>
                             </ul>
                         </div>
-                        <div class="bg-slate-900/50 p-2.5 rounded-xl border border-rose-500/20 text-rose-300">
+                        <div class="bg-rose-50 dark:bg-slate-900/50 p-3 rounded-xl border border-rose-300 dark:border-rose-500/20 text-rose-900 dark:text-rose-300">
                             <strong>Da limitare:</strong>
-                            <ul class="mt-1 space-y-1 list-disc list-inside text-slate-300 text-[11px]">
+                            <ul class="mt-1 space-y-1 list-disc list-inside text-slate-700 dark:text-slate-300 text-[11px]">
                                 <li>Frittura</li>
-                                <li>Griglia ad alte temp.</li>
-                                <li>Cotture con burro/panna</li>
-                                <li>Soffritti ad alta temp.</li>
+                                <li>Griglia ad alte temperature</li>
+                                <li>Cotture con burro, panna o grassi animali</li>
+                                <li>Saltare le verdure ad alta temperatura</li>
                             </ul>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-slate-800/60 border border-slate-700/70 rounded-2xl p-4 space-y-2">
-                    <h3 class="text-sm font-bold text-amber-400 flex items-center gap-2">
-                        <i class="fa-solid fa-capsules"></i> Integratori Consigliati
+                <div class="bg-white dark:bg-slate-800/60 border border-amber-200 dark:border-slate-700/70 rounded-2xl p-4 space-y-2 shadow-sm">
+                    <h3 class="text-sm font-bold text-amber-700 dark:text-amber-400 flex items-center gap-2">
+                        <i class="fa-solid fa-capsules text-amber-500"></i> Integratori Consigliati
                     </h3>
-                    <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                    <ul class="text-xs text-slate-700 dark:text-slate-300 space-y-1.5 list-disc list-inside">
                         <li><strong>Drenante:</strong> Drenvin da assumere nella prima parte della giornata.</li>
                         <li><strong>Fermenti Lattici:</strong> Dicoflor60 al mattino.</li>
                     </ul>
@@ -270,9 +277,9 @@
     </main>
 
     <!-- BOTTOM NAVBAR STICKY -->
-    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-md border-t border-amber-500/20 px-4 py-2 shadow-2xl mb-safe">
+    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-amber-200 dark:border-amber-500/20 px-4 py-2 shadow-2xl mb-safe">
         <div class="max-w-md mx-auto grid grid-cols-4 gap-1 text-center">
-            <button onclick="switchTab('menu')" id="nav-menu" class="nav-btn py-1.5 rounded-xl text-amber-400 flex flex-col items-center justify-center gap-1 transition">
+            <button onclick="switchTab('menu')" id="nav-menu" class="nav-btn py-1.5 rounded-xl text-amber-600 dark:text-amber-400 flex flex-col items-center justify-center gap-1 transition">
                 <i class="fa-solid fa-utensils text-base"></i>
                 <span class="text-[10px] font-bold">Menù</span>
             </button>
@@ -292,21 +299,21 @@
     </nav>
 
     <!-- MODALE SPESA DEL GIORNO -->
-    <div id="dailyGroceryModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4 transition-opacity">
-        <div class="bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg max-h-[85vh] flex flex-col shadow-2xl">
-            <div class="p-4 border-b border-slate-800 flex items-center justify-between">
+    <div id="dailyGroceryModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4 transition-opacity">
+        <div class="bg-white dark:bg-slate-900 border border-amber-200 dark:border-slate-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg max-h-[85vh] flex flex-col shadow-2xl">
+            <div class="p-4 border-b border-amber-200 dark:border-slate-800 flex items-center justify-between">
                 <div>
-                    <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Lista Occorrente</span>
-                    <h3 id="modalDayTitle" class="text-lg font-black text-slate-100">Spesa del Giorno</h3>
+                    <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Lista Occorrente</span>
+                    <h3 id="modalDayTitle" class="text-lg font-black text-slate-900 dark:text-slate-100">Spesa del Giorno</h3>
                 </div>
-                <button onclick="closeDailyGroceryModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-slate-100 flex items-center justify-center">
+                <button onclick="closeDailyGroceryModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 flex items-center justify-center">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
             <div id="dailyGroceryContent" class="p-4 overflow-y-auto space-y-2 flex-1">
                 <!-- Contenuto iniettato via JS -->
             </div>
-            <div class="p-4 border-t border-slate-800 bg-slate-900/50">
+            <div class="p-4 border-t border-amber-200 dark:border-slate-800 bg-amber-50/50 dark:bg-slate-900/50">
                 <button onclick="closeDailyGroceryModal()" class="w-full py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition">
                     Chiudi
                 </button>
@@ -315,37 +322,37 @@
     </div>
 
     <!-- MODALE EDIT PASTI -->
-    <div id="editMealModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4 transition-opacity">
-        <div class="bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg max-h-[90vh] flex flex-col shadow-2xl">
-            <div class="p-4 border-b border-slate-800 flex items-center justify-between">
+    <div id="editMealModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4 transition-opacity">
+        <div class="bg-white dark:bg-slate-900 border border-amber-200 dark:border-slate-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg max-h-[90vh] flex flex-col shadow-2xl">
+            <div class="p-4 border-b border-amber-200 dark:border-slate-800 flex items-center justify-between">
                 <div>
-                    <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Personalizza Pasti</span>
-                    <h3 id="editModalDayTitle" class="text-lg font-black text-slate-100">Modifica Menù</h3>
+                    <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Personalizza Pasti</span>
+                    <h3 id="editModalDayTitle" class="text-lg font-black text-slate-900 dark:text-slate-100">Modifica Menù</h3>
                 </div>
-                <button onclick="closeEditModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-slate-100 flex items-center justify-center">
+                <button onclick="closeEditModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 flex items-center justify-center">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
             <div class="p-4 overflow-y-auto space-y-3 flex-1">
                 <div>
-                    <label class="block text-xs font-bold text-amber-400 mb-1">Colazione</label>
-                    <textarea id="editColazione" rows="3" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-100 focus:outline-none focus:border-amber-500"></textarea>
+                    <label class="block text-xs font-bold text-amber-700 dark:text-amber-400 mb-1">Colazione</label>
+                    <textarea id="editColazione" rows="3" class="w-full bg-amber-50/50 dark:bg-slate-800 border border-amber-200 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-amber-500"></textarea>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-amber-400 mb-1">Pranzo</label>
-                    <textarea id="editPranzo" rows="3" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-100 focus:outline-none focus:border-amber-500"></textarea>
+                    <label class="block text-xs font-bold text-amber-700 dark:text-amber-400 mb-1">Pranzo</label>
+                    <textarea id="editPranzo" rows="3" class="w-full bg-amber-50/50 dark:bg-slate-800 border border-amber-200 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-amber-500"></textarea>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-amber-400 mb-1">Spuntino</label>
-                    <textarea id="editSpuntino" rows="2" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-100 focus:outline-none focus:border-amber-500"></textarea>
+                    <label class="block text-xs font-bold text-amber-700 dark:text-amber-400 mb-1">Spuntino</label>
+                    <textarea id="editSpuntino" rows="2" class="w-full bg-amber-50/50 dark:bg-slate-800 border border-amber-200 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-amber-500"></textarea>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-amber-400 mb-1">Cena</label>
-                    <textarea id="editCena" rows="3" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-100 focus:outline-none focus:border-amber-500"></textarea>
+                    <label class="block text-xs font-bold text-amber-700 dark:text-amber-400 mb-1">Cena</label>
+                    <textarea id="editCena" rows="3" class="w-full bg-amber-50/50 dark:bg-slate-800 border border-amber-200 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-amber-500"></textarea>
                 </div>
             </div>
-            <div class="p-4 border-t border-slate-800 bg-slate-900/50 flex gap-2">
-                <button onclick="resetDayToDefault()" class="px-3 py-2.5 rounded-xl bg-slate-800 text-slate-300 font-bold text-xs hover:bg-slate-700 transition">
+            <div class="p-4 border-t border-amber-200 dark:border-slate-800 bg-amber-50/50 dark:bg-slate-900/50 flex gap-2">
+                <button onclick="resetDayToDefault()" class="px-3 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300 font-bold text-xs hover:bg-slate-300 dark:hover:bg-slate-700 transition">
                     Ripristina
                 </button>
                 <button onclick="saveMealEdits()" class="flex-1 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition">
@@ -508,11 +515,31 @@
 
         // INIZIALIZZAZIONE
         document.addEventListener("DOMContentLoaded", () => {
+            initTheme();
             loadStoredData();
             setDailyQuote();
             selectDay(getTodayDayName());
             initWeightChart();
         });
+
+        // TEMA GIORNO / NOTTE
+        function initTheme() {
+            const savedTheme = localStorage.getItem("olympia_theme");
+            if (savedTheme === "light") {
+                document.documentElement.classList.remove("dark");
+                document.getElementById("theme-color-meta").setAttribute("content", "#fef3c7");
+            } else {
+                document.documentElement.classList.add("dark");
+                document.getElementById("theme-color-meta").setAttribute("content", "#1e293b");
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle("dark");
+            localStorage.setItem("olympia_theme", isDark ? "dark" : "light");
+            document.getElementById("theme-color-meta").setAttribute("content", isDark ? "#1e293b" : "#fef3c7");
+            if (weightChartInstance) updateChartColors();
+        }
 
         function getTodayDayName() {
             const days = ["domenica", "lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato"];
@@ -539,7 +566,6 @@
                 { date: "2026-04-01", weight: 62.5 }
             ];
             
-            // Set default date picker to today
             document.getElementById("weightDate").value = new Date().toISOString().split('T')[0];
         }
 
@@ -548,7 +574,7 @@
                 document.getElementById(`tab-${t}`).classList.add("hidden");
                 const navBtn = document.getElementById(`nav-${t}`);
                 if (navBtn) {
-                    navBtn.classList.remove("text-amber-400");
+                    navBtn.classList.remove("text-amber-600", "dark:text-amber-400");
                     navBtn.classList.add("text-slate-400");
                 }
             });
@@ -557,7 +583,7 @@
             const activeNavBtn = document.getElementById(`nav-${tabId}`);
             if (activeNavBtn) {
                 activeNavBtn.classList.remove("text-slate-400");
-                activeNavBtn.classList.add("text-amber-400");
+                activeNavBtn.classList.add("text-amber-600", "dark:text-amber-400");
             }
 
             if (tabId === "grocery") {
@@ -571,22 +597,20 @@
         function selectDay(day) {
             activeDay = day;
             
-            // Highlight Day Button
             document.querySelectorAll(".day-btn").forEach(btn => {
-                btn.classList.remove("bg-amber-500", "text-slate-950", "shadow-lg", "shadow-amber-500/20");
-                btn.classList.add("bg-slate-800", "text-slate-300");
+                btn.classList.remove("bg-amber-500", "text-slate-950", "shadow-md", "shadow-amber-500/20");
+                btn.classList.add("bg-white", "dark:bg-slate-800", "text-slate-700", "dark:text-slate-300");
             });
 
             const currentBtn = document.getElementById(`btn-${day}`);
             if (currentBtn) {
-                currentBtn.classList.remove("bg-slate-800", "text-slate-300");
-                currentBtn.classList.add("bg-amber-500", "text-slate-950", "shadow-lg", "shadow-amber-500/20");
+                currentBtn.classList.remove("bg-white", "dark:bg-slate-800", "text-slate-700", "dark:text-slate-300");
+                currentBtn.classList.add("bg-amber-500", "text-slate-950", "shadow-md", "shadow-amber-500/20");
             }
 
             document.getElementById("selectedDayTitle").innerText = day;
             renderDayMeals(day);
 
-            // Load daily note
             document.getElementById("dailyNoteInput").value = dailyNotes[day] || "";
         }
 
@@ -595,10 +619,10 @@
             const container = document.getElementById("mealsContainer");
 
             const mealIcons = {
-                colazione: { icon: "fa-mug-hot", title: "Colazione", color: "text-amber-400" },
-                pranzo: { icon: "fa-sun", title: "Pranzo", color: "text-amber-500" },
-                spuntino: { icon: "fa-apple-whole", title: "Spuntino", color: "text-amber-300" },
-                cena: { icon: "fa-moon", title: "Cena", color: "text-indigo-400" }
+                colazione: { icon: "fa-mug-hot", title: "Colazione", color: "text-amber-600 dark:text-amber-400" },
+                pranzo: { icon: "fa-sun", title: "Pranzo", color: "text-amber-600 dark:text-amber-500" },
+                spuntino: { icon: "fa-apple-whole", title: "Spuntino", color: "text-amber-600 dark:text-amber-300" },
+                cena: { icon: "fa-moon", title: "Cena", color: "text-amber-700 dark:text-indigo-400" }
             };
 
             let html = "";
@@ -607,12 +631,12 @@
                 const formattedText = text.replace(/\n/g, "<br>");
 
                 html += `
-                    <div class="bg-slate-800/60 border border-slate-700/70 rounded-2xl p-4 shadow-md space-y-1.5 hover:border-amber-500/30 transition">
+                    <div class="bg-white dark:bg-slate-800/60 border border-amber-200 dark:border-slate-700/70 rounded-2xl p-4 shadow-sm dark:shadow-md space-y-1.5 hover:border-amber-400 dark:hover:border-amber-500/30 transition">
                         <div class="flex items-center gap-2">
                             <i class="fa-solid ${details.icon} ${details.color} text-sm"></i>
-                            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-200">${details.title}</h3>
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-200">${details.title}</h3>
                         </div>
-                        <p class="text-xs text-slate-300 leading-relaxed pl-6">${formattedText}</p>
+                        <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed pl-6">${formattedText}</p>
                     </div>
                 `;
             }
@@ -676,9 +700,9 @@
             let html = `<ul class="space-y-2">`;
             items.forEach((item, idx) => {
                 html += `
-                    <li class="flex items-center gap-3 bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/60">
+                    <li class="flex items-center gap-3 bg-amber-50/50 dark:bg-slate-800/80 p-2.5 rounded-xl border border-amber-200 dark:border-slate-700/60">
                         <input type="checkbox" id="dg-${idx}" class="w-4 h-4 rounded accent-amber-500">
-                        <label for="dg-${idx}" class="text-xs text-slate-200 select-none cursor-pointer">${item}</label>
+                        <label for="dg-${idx}" class="text-xs text-slate-800 dark:text-slate-200 select-none cursor-pointer">${item}</label>
                     </li>
                 `;
             });
@@ -703,7 +727,6 @@
                 }
             });
 
-            // Count occurrences or unique items
             const counts = {};
             allItems.forEach(item => {
                 counts[item] = (counts[item] || 0) + 1;
@@ -711,12 +734,12 @@
 
             let html = `<div class="space-y-2">`;
             Object.keys(counts).forEach((item, idx) => {
-                const countText = counts[item] > 1 ? `<span class="text-[10px] bg-amber-500/20 text-amber-300 font-bold px-2 py-0.5 rounded-full">x${counts[item]} giorni</span>` : '';
+                const countText = counts[item] > 1 ? `<span class="text-[10px] bg-amber-200 dark:bg-amber-500/20 text-amber-900 dark:text-amber-300 font-bold px-2 py-0.5 rounded-full">x${counts[item]} giorni</span>` : '';
                 html += `
-                    <div class="flex items-center justify-between bg-slate-800/60 border border-slate-700/70 p-3 rounded-2xl">
+                    <div class="flex items-center justify-between bg-white dark:bg-slate-800/60 border border-amber-200 dark:border-slate-700/70 p-3 rounded-2xl shadow-sm">
                         <div class="flex items-center gap-3">
                             <input type="checkbox" id="wg-${idx}" class="w-4 h-4 rounded accent-amber-500">
-                            <label for="wg-${idx}" class="text-xs font-medium text-slate-200 select-none cursor-pointer">${item}</label>
+                            <label for="wg-${idx}" class="text-xs font-medium text-slate-800 dark:text-slate-200 select-none cursor-pointer">${item}</label>
                         </div>
                         ${countText}
                     </div>
@@ -772,23 +795,22 @@
         function renderWeightHistory() {
             const container = document.getElementById("weightHistory");
             if (weightData.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-500 italic">Nessuna misurazione salvata.</p>`;
+                container.innerHTML = `<p class="text-xs text-slate-400 italic">Nessuna misurazione salvata.</p>`;
                 return;
             }
 
             let html = "";
-            // Reverse to show latest first
             [...weightData].reverse().forEach((entry, idx) => {
                 const originalIndex = weightData.length - 1 - idx;
                 html += `
-                    <div class="flex items-center justify-between bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/50 text-xs">
+                    <div class="flex items-center justify-between bg-amber-50/50 dark:bg-slate-900/60 p-2.5 rounded-xl border border-amber-200 dark:border-slate-700/50 text-xs">
                         <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-scale-balanced text-amber-400"></i>
-                            <span class="text-slate-300 font-medium">${entry.date}</span>
+                            <i class="fa-solid fa-scale-balanced text-amber-600 dark:text-amber-400"></i>
+                            <span class="text-slate-700 dark:text-slate-300 font-medium">${entry.date}</span>
                         </div>
                         <div class="flex items-center gap-3">
-                            <span class="font-bold text-slate-100">${entry.weight} kg</span>
-                            <button onclick="deleteWeightEntry(${originalIndex})" class="text-slate-500 hover:text-rose-400">
+                            <span class="font-bold text-slate-900 dark:text-slate-100">${entry.weight} kg</span>
+                            <button onclick="deleteWeightEntry(${originalIndex})" class="text-slate-400 hover:text-rose-500">
                                 <i class="fa-solid fa-trash text-xs"></i>
                             </button>
                         </div>
@@ -808,12 +830,12 @@
                     datasets: [{
                         label: 'Peso (kg)',
                         data: weightData.map(d => d.weight),
-                        borderColor: '#f59e0b',
+                        borderColor: '#d97706',
                         backgroundColor: 'rgba(245, 158, 11, 0.15)',
                         borderWidth: 3,
                         fill: true,
                         tension: 0.3,
-                        pointBackgroundColor: '#fbbf24',
+                        pointBackgroundColor: '#f59e0b',
                         pointRadius: 4
                     }]
                 },
@@ -825,23 +847,36 @@
                     },
                     scales: {
                         x: {
-                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                            ticks: { color: '#94a3b8', font: { size: 10 } }
+                            grid: { color: 'rgba(148, 163, 184, 0.1)' },
+                            ticks: { color: '#64748b', font: { size: 10 } }
                         },
                         y: {
-                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                            ticks: { color: '#94a3b8', font: { size: 10 } }
+                            grid: { color: 'rgba(148, 163, 184, 0.1)' },
+                            ticks: { color: '#64748b', font: { size: 10 } }
                         }
                     }
                 }
             });
         }
 
+        function updateChartColors() {
+            if (!weightChartInstance) return;
+            const isDark = document.documentElement.classList.contains("dark");
+            const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
+            const tickColor = isDark ? '#94a3b8' : '#64748b';
+
+            weightChartInstance.options.scales.x.grid.color = gridColor;
+            weightChartInstance.options.scales.x.ticks.color = tickColor;
+            weightChartInstance.options.scales.y.grid.color = gridColor;
+            weightChartInstance.options.scales.y.ticks.color = tickColor;
+            weightChartInstance.update();
+        }
+
         function updateChart() {
             if (weightChartInstance) {
                 weightChartInstance.data.labels = weightData.map(d => d.date);
                 weightChartInstance.data.datasets[0].data = weightData.map(d => d.weight);
-                weightChartInstance.update();
+                updateChartColors();
             }
         }
     </script>
