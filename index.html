@@ -11,6 +11,9 @@
     <meta name="apple-mobile-web-app-title" content="Piano Olympia">
     <meta name="theme-color" content="#fef3c7" id="theme-color-meta">
     
+    <!-- Custom App Icon for iOS Home Screen (Evita la "P" di Safari) -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%23f59e0b'/%3E%3Ctext x='50%' y='54%' font-size='260' text-anchor='middle' dominant-baseline='middle'%3E🍏%3C/text%3E%3C/svg%3E">
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -227,12 +230,12 @@
                         <i class="fa-solid fa-droplet text-amber-500"></i> Idratazione & Raccomandazioni
                     </h3>
                     <ul class="text-xs text-slate-700 dark:text-slate-300 space-y-1.5 list-disc list-inside">
-                        <li>Bere almeno <strong>2 Litri di acqua</strong> diluiti durante tutta la giornata.</li>
-                        <li>Limitare l'assunzione di caffè, dello zucchero semplice e del sale.</li>
-                        <li>Insaporire i piatti con spezie (curcuma, paprika, pepe, rosmarino, noce moscata, curry), limone e aceto di mele o vino.</li>
-                        <li>Masticare lentamente: la digestione inizia dalla bocca ed evita eventi fermentativi.</li>
-                        <li>Evitare la sedentarietà, svolgere movimento per almeno 40 minuti.</li>
-                        <li>È possibile invertire il pranzo con la cena.</li>
+                        <li>Bere almeno <strong>2 Litri di acqua</strong> diluiti durante tutta la giornata[cite: 6].</li>
+                        <li>Limitare l'assunzione di caffè, dello zucchero semplice e del sale[cite: 6].</li>
+                        <li>Insaporire i piatti con spezie (curcuma, paprika, pepe, rosmarino, noce moscata, curry), limone e aceto di mele o vino[cite: 6, 7].</li>
+                        <li>Masticare lentamente: la digestione inizia dalla bocca ed evita eventi fermentativi[cite: 7].</li>
+                        <li>Evitare la sedentarietà, svolgere movimento per almeno 40 minuti[cite: 7].</li>
+                        <li>È possibile invertire il pranzo con la cena[cite: 6].</li>
                     </ul>
                 </div>
 
@@ -244,19 +247,19 @@
                         <div class="bg-emerald-50 dark:bg-slate-900/50 p-3 rounded-xl border border-emerald-300 dark:border-emerald-500/20 text-emerald-900 dark:text-emerald-300">
                             <strong>Consigliate:</strong>
                             <ul class="mt-1 space-y-1 list-disc list-inside text-slate-700 dark:text-slate-300 text-[11px]">
-                                <li>Vapore</li>
-                                <li>Bollitura / Lessatura</li>
-                                <li>Forno a basse temperature</li>
-                                <li>Padella antiaderente con poca acqua o poco olio EVO</li>
+                                <li>Vapore[cite: 7]</li>
+                                <li>Bollitura / Lessatura[cite: 7]</li>
+                                <li>Forno a basse temperature[cite: 7]</li>
+                                <li>Padella antiaderente con poca acqua o poco olio EVO[cite: 7]</li>
                             </ul>
                         </div>
                         <div class="bg-rose-50 dark:bg-slate-900/50 p-3 rounded-xl border border-rose-300 dark:border-rose-500/20 text-rose-900 dark:text-rose-300">
                             <strong>Da limitare:</strong>
                             <ul class="mt-1 space-y-1 list-disc list-inside text-slate-700 dark:text-slate-300 text-[11px]">
-                                <li>Frittura</li>
-                                <li>Griglia ad alte temperature</li>
-                                <li>Cotture con burro, panna o grassi animali</li>
-                                <li>Saltare le verdure ad alta temperatura</li>
+                                <li>Frittura[cite: 7]</li>
+                                <li>Griglia ad alte temperature[cite: 7]</li>
+                                <li>Cotture con burro, panna o grassi animali[cite: 7]</li>
+                                <li>Saltare le verdure ad alta temperatura[cite: 7]</li>
                             </ul>
                         </div>
                     </div>
@@ -267,8 +270,8 @@
                         <i class="fa-solid fa-capsules text-amber-500"></i> Integratori Consigliati
                     </h3>
                     <ul class="text-xs text-slate-700 dark:text-slate-300 space-y-1.5 list-disc list-inside">
-                        <li><strong>Drenante:</strong> Drenvin da assumere nella prima parte della giornata.</li>
-                        <li><strong>Fermenti Lattici:</strong> Dicoflor60 al mattino.</li>
+                        <li><strong>Drenante:</strong> Drenvin da assumere nella prima parte della giornata[cite: 7].</li>
+                        <li><strong>Fermenti Lattici:</strong> Dicoflor60 al mattino[cite: 7].</li>
                     </ul>
                 </div>
             </div>
@@ -375,7 +378,7 @@
             "La disciplina è semplicemente scegliere tra ciò che vuoi ora e ciò che vuoi di più. ⭐"
         ];
 
-        // PIANO ALIMENTARE PREDEFINITO (Dott.ssa Alessia Paradiso)
+        // PIANO ALIMENTARE PREDEFINITO (Dott.ssa Alessia Paradiso)[cite: 1, 2, 3, 4, 5, 6, 7]
         const defaultDietPlan = {
             "lunedì": {
                 colazione: "2 bicchieri d'acqua\n150 ml di latte parz. scremato con caffè amaro\n+ 3 mini pancake (40g farina d'avena, 1 uovo, 40g yogurt magro bianco, 1 cucchiaio cocco rapè, 20g bevanda vegetale cocco/avena, ½ lievito, 1 cucchiaino miele) farcito con 1 cucchiaino di crema 100% nocciole o yogurt.",
